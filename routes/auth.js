@@ -13,7 +13,7 @@ require('../config.js')(passport);
 const passportJWT = require('passport-jwt'); // ExtractJwt to help extract the token
 const jwt = require('jsonwebtoken');
 
-
+const { createFolder } = require('../utils/fileManagement');
 
 router.use(passport.initialize());
 
@@ -64,7 +64,7 @@ router.post('/login', async (req, res) => {
             res.status(400).send('Invalid password');
         }
 
-        var token = jwt.sign(user.toJSON(), 'jwtsecretkey', {
+        const token = jwt.sign(user.toJSON(), 'jwtsecretkey', {
             expiresIn: 604800 // 1 week
         });
         // return the information including token as JSON
@@ -100,11 +100,15 @@ router.post('/signup', async (req, res) => {
         });
 
 
+
+
         // return the information including token as JSON
         res.json({
             success: true,
             token: 'Bearer ' + token
         });
+
+        createFolder(user.username);
 
 
     } catch (err) {

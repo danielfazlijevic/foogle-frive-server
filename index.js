@@ -11,6 +11,7 @@ const User = require('./database/models').User;
 
 
 const authRoutes = require('./routes/auth.js');
+const fileRoutes = require('./routes/files');
 
 const PORT = 8000;
 
@@ -35,11 +36,14 @@ app.get('/', function (req, res) {
 }); // start the app
 
 app.use('/auth', authRoutes);
+app.use('/files', fileRoutes);
 
 app.get('/users', async (req, res) => {
   const users = await User.findAll();
   res.json(users);
 });
+
+
 
 
 
