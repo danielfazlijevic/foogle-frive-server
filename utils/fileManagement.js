@@ -11,11 +11,12 @@ const createFolder = (folderPath) => {
     //         error ? reject(error) : resolve();
     //     });
     // });
+    console.log('attempting to create a folder at path', folderPath);
     if (fs.existsSync(process.cwd() + '/user_data/' + folderPath)) {
         return true;
     } else {
-            fs.mkdirSync(process.cwd() + '/user_data/' + folderPath);
-            return true;
+        fs.mkdirSync(process.cwd() + '/user_data/' + folderPath);
+        return true;
     }
 };
 
@@ -32,8 +33,13 @@ const listFolderContent = (folder) => {
 const getFileFromPath = (fileLocation) => {
     return new Promise((resolve, reject) => {
         fs.readFile('user_data/' + fileLocation, function (error, data) {
-            error ? reject(error) : resolve(data.toString());
-          });
+            if (error)
+                return reject(error);
+            const ext = path.extname(fileLocation).substr(1);
+            const content = ext !== 'txt' ? data.toString('base64') : data.toString();
+            // console.log('encoding: ', encoding);
+            resolve(content);
+        });
     });
 }
 

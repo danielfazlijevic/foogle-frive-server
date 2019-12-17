@@ -28,22 +28,47 @@ router.get('/', function (req, res) {
     res.send('Files API');
 });
 
-router.get('/list/:path?', passport.authenticate('jwt', {
+router.get('/list/root', passport.authenticate('jwt', {
     session: false
 }), async (req, res) => {
     const nested = req.params.path ? '/' + req.params.path : '';
-    const files = await listFolderContent(req.user.username + nested);
+    const fullPath = req.user.username + nested;
+    const files = await listFolderContent(fullPath);
     console.log('Files: ', files);
-    res.json(files);
+    res.json({
+        files,
+        path: fullPath
+    });
 })
 
-router.post('/mkdir/:dirname/:customPath?', passport.authenticate('jwt', {
+
+router.get('/list/', passport.authenticate('jwt', {
+    session: false
+}), async (req, res) => {
+    console.log('getting files')
+    try {
+        const nested = req.query.path || '';
+        const fullPath = nested;
+        const files = await listFolderContent(fullPath);
+        console.log('Files: ', files);
+        res.json({
+            files,
+            path: fullPath
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(400).send('Error!');
+    }
+})
+
+
+router.post('/mkdir/:dirname/', passport.authenticate('jwt', {
     session: false
 }), async (req, res) => {
     console.log('path je', req.params.customPath);
-    const folderPath = req.params.path || '/';
+    const folderPath = req.body.customPath || '/';
     console.log(folderPath);
-    const folderCreated = await createFolder(req.user.username + folderPath + req.params.dirname);
+    const folderCreated = await createFolder(folderPath  + req.params.dirname);
     console.log('folder created', folderCreated);
     if (folderCreated) {
         res.json({
@@ -55,7 +80,7 @@ router.post('/mkdir/:dirname/:customPath?', passport.authenticate('jwt', {
 })
 
 
-router.get('/get/', passport.authenticate('jwt', {
+router.post('/get/', passport.authenticate('jwt', {
     session: false
 }), async (req, res) => {
     // TODO - dodati validaciju
@@ -70,14 +95,15 @@ router.get('/get/', passport.authenticate('jwt', {
     }
 });
 
-router.post('/upload', passport.authenticate('jwt', {
+router.put('/upload', passport.authenticate('jwt', {
     session: false
 }), async (req, res) => {
     // TODO - dodati validaciju
 
     const storage = multer.diskStorage({
         destination: function (req, file, cb) {
-            const filePath = './user_data/' + req.user.username + (req.body.filePath || '');
+            console.log('file path from req:', req.body);
+            const filePath = './user_data/' + (req.body.filePath || '');
             console.log('filePath: ', filePath);
             cb(null, filePath);
         },

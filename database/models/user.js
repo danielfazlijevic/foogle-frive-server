@@ -22,6 +22,9 @@ module.exports = (sequelize, DataTypes) => {
           msg: "Password must be at least 8 characters."
         }
       }
+    },
+    accountType:{
+      type: DataTypes.STRING
     }
   }, {});
 

@@ -70,7 +70,7 @@ router.post('/login', async (req, res) => {
         // return the information including token as JSON
         res.json({
             success: true,
-            token: 'Bearer ' + token
+            token: token
         });
 
     } catch (err) {
@@ -91,7 +91,8 @@ router.post('/signup', async (req, res) => {
         // create a new user with the password hash from bcrypt
         let user = await User.create(
             Object.assign(req.body, {
-                password: hash
+                password: hash,
+                accountType: 'premium'
             })
         );
 
@@ -105,7 +106,7 @@ router.post('/signup', async (req, res) => {
         // return the information including token as JSON
         res.json({
             success: true,
-            token: 'Bearer ' + token
+            token: token
         });
 
         createFolder(user.username);
