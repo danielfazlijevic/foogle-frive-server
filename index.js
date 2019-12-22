@@ -9,10 +9,12 @@ const app = express();
 const models = require('./database/models');
 
 const User = require('./database/models').User;
+const Link = require('./database/models').Link;
 
 
 const authRoutes = require('./routes/auth.js');
 const fileRoutes = require('./routes/files');
+const sharedFilesRoutes = require('./routes/shared');
 
 const PORT = 8000;
 
@@ -40,9 +42,12 @@ app.get('/', function (req, res) {
 
 app.use('/auth', authRoutes);
 app.use('/files', fileRoutes);
+app.use('/shared', sharedFilesRoutes);
 
 app.get('/users', async (req, res) => {
-  const users = await User.findAll();
+  const users = await User.findAll({
+    include: [{model: Link, as: "AccessTo"}]
+  });
   res.json(users);
 });
 

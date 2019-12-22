@@ -1,7 +1,8 @@
 'use strict';
 const bcrypt = require('bcryptjs');
 
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize, DataTypes) => 
+{
   var User = sequelize.define('User', {
     username: {
       type: DataTypes.STRING,
@@ -10,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         len: {
           args: [1, 99],
-          msg: 'Invalid User name. Must be between 1 and 99 chars.'
+          msg: 'Invalid Username. Must be between 1 and 99 chars.'
         }
       }
     },
@@ -30,6 +31,8 @@ module.exports = (sequelize, DataTypes) => {
 
   User.associate = function (models) {
     // associations can be defined here
+    User.hasMany(models.Link, {as: "User", constraints: false});
+    User.hasMany(models.Link, {as: "AccessTo", constraints: false});
   };
  
 
