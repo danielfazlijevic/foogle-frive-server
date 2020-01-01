@@ -6,8 +6,6 @@ const cors = require('cors');
 
 const app = express();
 
-const models = require('./database/models');
-
 const User = require('./database/models').User;
 const Link = require('./database/models').Link;
 
@@ -51,10 +49,7 @@ app.get('/users', async (req, res) => {
   res.json(users);
 });
 
-
-
-
-
+/* USED FOR FORCING SYNC WITH DATABASE -> DELETES EVERYTHING FROM THE DATABASE */
 // models.sequelize.sync({ force: true }).then(result => {
 //   // console.log(result);
 //   app.listen(PORT, function () {

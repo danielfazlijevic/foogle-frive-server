@@ -6,11 +6,11 @@ module.exports = {
     dialect: 'postgres',
   },
   test: {
-    url: "postgres://daniel:daniel123@localhost:5432/fglfrive",
+    url: "LOAD_ME_FROM_ENV",
     dialect: 'postgres',
   },
   production: {
-    url: "postgres://daniel:daniel123@localhost:5432/fglfrive",
+    url: "LOAD_ME_FROM_ENV",
     dialect: 'postgres',
   },
 };

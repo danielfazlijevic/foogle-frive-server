@@ -18,7 +18,11 @@ const jwt = require('jsonwebtoken');
 const {
     createFolder,
     listFolderContent,
-    getFileFromPath
+    getFileFromPath,
+    renameFile,
+    deleteFolder,
+    testRename,
+    moveFile
 } = require('../utils/fileManagement');
 
 router.use(passport.initialize());
@@ -68,7 +72,7 @@ router.post('/mkdir/:dirname/', passport.authenticate('jwt', {
     console.log('path je', req.params.customPath);
     const folderPath = req.body.customPath || '/';
     console.log(folderPath);
-    const folderCreated = await createFolder(folderPath  + req.params.dirname);
+    const folderCreated = await createFolder(folderPath + req.params.dirname);
     console.log('folder created', folderCreated);
     if (folderCreated) {
         res.json({
@@ -91,6 +95,67 @@ router.post('/get/', passport.authenticate('jwt', {
         console.log('requested file at', requestedFilePath);
         res.send(file);
     } catch (e) {
+        res.status(400).send('Error!');
+    }
+});
+
+
+
+
+
+
+router.patch('/rename', passport.authenticate('jwt', {
+    session: false
+}), async (req, res) => {
+    try {
+        const {
+            currentPath,
+            wantedName
+        } = req.body;
+        const renamed = await renameFile(currentPath, wantedName)
+        res.send("OK!");
+    } catch (err) {
+        console.log('error', err);
+        res.status(400).send('Error!');
+    }
+});
+
+router.patch('/move', passport.authenticate('jwt', {
+    session: false
+}), async (req, res) => {
+    try {
+        const {
+            currentPath,
+            desiredPath
+        } = req.body;
+        const renamed = await moveFile(currentPath, desiredPath)
+        res.send("OK!");
+    } catch (err) {
+        console.log('error', err);
+        res.status(400).send('Error!');
+    }
+});
+
+
+router.get('/test-rename', async (req,res,next) => {
+    testRename();
+    res.send('ok');
+
+});
+
+router.delete('/folder', passport.authenticate('jwt', {
+    session: false
+}), async (req, res) => {
+    try {
+        console.log(req.body);
+        const {
+            folderPath
+        } = req.body;
+        console.log(folderPath);
+        await deleteFolder(folderPath)
+        res.send("OK!");
+    } catch (err) {
+        console.log('error', err);
         res.status(400).send('Error!');
     }
 });

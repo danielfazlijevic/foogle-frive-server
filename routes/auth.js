@@ -1,6 +1,5 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const fs = require('fs')
 
 const router = express.Router();
 
@@ -10,7 +9,6 @@ const User = require('../database/models').User;
 // import passport and passport-jwt modules
 const passport = require('passport');
 require('../config.js')(passport);
-const passportJWT = require('passport-jwt'); // ExtractJwt to help extract the token
 const jwt = require('jsonwebtoken');
 
 const { createFolder } = require('../utils/fileManagement');
@@ -56,6 +54,7 @@ router.post('/login', async (req, res) => {
         if (!user) {
             return res.status(400).send('invalid username or password');
         }
+
         console.log(password, user.password);
 
         const validPassword = user.validPassword(password);
@@ -99,9 +98,6 @@ router.post('/signup', async (req, res) => {
         const token = jwt.sign(user.toJSON(), 'jwtsecretkey', {
             expiresIn: 604800 // 1 week
         });
-
-
-
 
         // return the information including token as JSON
         res.json({
